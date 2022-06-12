@@ -1,0 +1,23 @@
+language: generic 
+sudo : required
+services:
+  - docker
+
+before_install:
+  - docker build -t codistro/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true USERNAME/react-test npm test
+
+after_success:
+  - docker build -t codistro/multi-client ./client
+  - docker build -t codistro/multi-nginx ./nginx
+  - docker build -t codistro/multi-server ./server
+  - docker build -t codistro/multi-worker ./worker
+  #login
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  #push image
+  - docker push codistro/multi-client
+  - docker push codistro/multi-nginx
+  - docker push codistro/multi-server
+  - docker push codistro/multi-worker
