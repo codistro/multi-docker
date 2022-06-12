@@ -15,6 +15,8 @@ after_success:
   - docker build -t codistro/multi-server ./server
   - docker build -t codistro/multi-worker ./worker
   #login
+  - echo "$DOCKER_PASSWORD"
+  - echo "$DOCKER_ID" 
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   #push image
   - docker push codistro/multi-client
